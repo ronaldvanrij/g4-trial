@@ -1,0 +1,12 @@
+# Use this file to create multiple end entity certificates using create_endentity.sh
+#
+# Comments are prefixed with a '#' character.
+#
+# This file requires a particular format and column ordering:
+#   1. Basename of the files to be created for this certificate. Files include private keys, CSRs and certificates.
+#   2. Subject Distinguished Name. This type requires *C*ountry, *O*rganization, *C*ommon*N*ame and *serialNumber*
+#
+#
+#
+G4PrivateTLS-OIN,/C=NL/O=Bedrijfsnaam/CN=Bedrijfsnaam - Afdeling/serialNumber=01234567890123456789
+

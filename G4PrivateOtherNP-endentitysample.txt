@@ -1,0 +1,26 @@
+# Use this file to create multiple end entity certificates using create_endentity.sh
+#
+# Comments are prefixed with a '#' character.
+#
+# This file requires a particular format and column ordering:
+#   1. Basename of the files to be created for this certificate. Files include private keys, CSRs and certificates.
+#   2. Subject Distinguished Name. Depending on validation types different fields are required or recommended. See examples below.
+#
+# For these certificate types, `subject.serialNumber` must be included to uniquely identify its subject. The examples below use some
+# arbitrary string. If this string is formatted according to Section 5.1.3 of ETSI standard EN 319 412-1, a qcStatement
+# must be included. This must be done through the openssl configuration file, which must be done manually.
+#
+#
+
+# Individual Validated
+G4PrivateOtherNP-Ind,/C=NL/SN=Puk/GN=Pietje/CN=Pietje Puk/serialNumber=abcdef1
+
+# Reg. Prof. Validated (profession "Rangeerder" is chosen as an example from the European database)
+G4PrivateOtherNP-RegP,/C=NL/SN=Puk/GN=Pietje/CN=Pietje Puk/title=Rangeerder/serialNumber=abcdef1
+
+# Sponsor Validated (some variations may exist regarding organizationName and organizationIdentifier, recommendation is to add both)
+G4PrivateOtherNP-Spon,/C=NL/SN=Puk/GN=Pietje/CN=Pietje Puk/serialNumber=abcdef1/organizationName=Bedrijfsnaam B.V./organizationIdentifier=NTRNL-99999999
+
+# Reg. Prof. w/Sponsor Val. (combines attributes from both Reg. Prof. Validated and Sponsor Validated certificate types)
+G4PrivateOtherNP-RPSp,/C=NL/SN=Puk/GN=Pietje/CN=Pietje Puk/title=Rangeerder/serialNumber=abcdef1/organizationName=Bedrijfsnaam B.V./organizationIdentifier=NTRNL-99999999
+

@@ -1,21 +1,33 @@
 [ default ]
 # Override these using environment variables
-CRLURI = http://localhost:8080/crl
-CERTURI = http://localhost:8080/certs
-SAN = URI:www.example.com
+ROOTCN                  = TRIAL PKIoverheid Root CA - G4 Root Priv G-TLS - 2024
+ROOTBASENAME            = TRIALPKIoverheidRootCAG4RootPrivGTLS2024
+
+INTMBASENAME            = TRIALPKIoverheidRootCAG4IntmPrivGTLSSYS2024
+INTMCN                  = TRIAL PKIoverheid Root CA - G4 Intm Priv G-TLS SYS - 2024
+
+TSPBASENAME             = TRIALMyTSPG4PKIoPrivGTLSSYS2024
+TSPCN                   = TRIAL My TSP - G4 PKIo Priv G-TLS SYS - 2024
+
+CRLURI                  = http://localhost:8080/crl
+CERTURI                 = http://localhost:8080/certs
+
+SAN                     = URI:www.example.com
+
+CA_DIR                  = ./ca/G4PrivateTLS
 
 [ ca ]
 default_ca              = CA_default
 
 [ CA_default ]
-dir                     = ./ca
+dir                     = $ENV::CA_DIR
 certs                   = $dir/certs
 database                = $dir/index.txt
 new_certs_dir           = $dir/newcerts
 serial                  = $dir/serial
 rand_serial             = yes
-certificate             = $dir/certs/TRIALPKIoverheidRootCAG4RootPrivGTLS2024.pem
-private_key             = $dir/private/TRIALPKIoverheidRootCAG4RootPrivGTLS2024.key
+certificate             = $certs/$ENV::ROOTBASENAME.pem
+private_key             = $dir/private/$ENV::ROOTBASENAME.key
 default_md              = sha512
 default_days            = 365
 default_crl_days        = 30
@@ -42,7 +54,7 @@ prompt                  = no
 [ req_ca_dn ]
 countryName             = NL
 organizationName        = PKIoverheid TRIAL - not for Production use
-commonName              = TRIAL PKIoverheid Root CA - G4 Root Priv G-TLS - 2024
+commonName              = $ENV::ROOTCN
 
 [ v3_ca ]
 basicConstraints        = critical, CA:true
@@ -61,15 +73,15 @@ prompt                  = no
 [ req_intermediate_dn ]
 countryName             = NL
 organizationName        = PKIoverheid TRIAL - not for Production use
-commonName              = TRIAL PKIoverheid Root CA - G4 Intm Priv G-TLS SYS - 2024
+commonName              = $ENV::INTMCN
 
 [ v3_intermediate_ca ]
 basicConstraints        = critical, CA:true
 authorityKeyIdentifier  = keyid:always,issuer
-authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/TRIALPKIoverheidRootCAG4RootPrivGTLS2024.cer
-certificatePolicies     = 2.16.528.1.1003.1.2.41.15.38.10, 2.16.528.1.1003.1.2.41.15.39.10, 2.16.528.1.1003.1.2.41.15.35.11, 0.4.0.2042.1.1, 0.4.0.2042.1.2
+authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/$ENV::ROOTBASENAME.cer
+certificatePolicies     = 0.4.0.2042.1.2, 2.16.528.1.1003.1.2.41.15.38.10, 2.16.528.1.1003.1.2.41.15.39.10, 2.16.528.1.1003.1.2.41.15.35.11, 0.4.0.2042.1.1
 extendedKeyUsage        = serverAuth,clientAuth
-crlDistributionPoints   = URI:$ENV::CRLURI/TRIALPKIoverheidRootCAG4RootPrivGTLS2024.crl
+crlDistributionPoints   = URI:$ENV::CRLURI/$ENV::ROOTBASENAME.crl
 subjectKeyIdentifier    = hash
 keyUsage                = critical, keyCertSign, cRLSign, digitalSignature
 
@@ -84,15 +96,15 @@ prompt                  = no
 [ req_issuing_dn ]
 countryName             = NL
 organizationName        = My TSP - not for Production use
-commonName              = TRIAL My TSP - G4 PKIo Priv G-TLS SYS - 2024
+commonName              = $ENV::TSPCN
 
 [ v3_issuing_ca ]
 basicConstraints        = critical, CA:true, pathlen:0
 authorityKeyIdentifier  = keyid:always,issuer
-authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/TRIALPKIoverheidRootCAG4IntmPrivGTLSSYS2024.cer
-certificatePolicies     = 2.16.528.1.1003.1.2.41.15.39.10, 2.16.528.1.1003.1.2.41.15.35.11, 0.4.0.2042.1.1, 0.4.0.2042.1.2
+authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/$ENV::INTMBASENAME.cer
+certificatePolicies     = 0.4.0.2042.1.1, 0.4.0.2042.1.2, 2.16.528.1.1003.1.2.41.15.39.10, 2.16.528.1.1003.1.2.41.15.35.11
 extendedKeyUsage        = serverAuth,clientAuth
-crlDistributionPoints   = URI:$ENV::CRLURI/TRIALPKIoverheidRootCAG4IntmPrivGTLSSYS2024.crl
+crlDistributionPoints   = URI:$ENV::CRLURI/$ENV::INTMBASENAME.crl
 subjectKeyIdentifier    = hash
 keyUsage                = critical, keyCertSign, cRLSign, digitalSignature
 
@@ -102,14 +114,33 @@ keyUsage                = critical, keyCertSign, cRLSign, digitalSignature
 [ v3_end_entity ]
 basicConstraints        = critical, CA:false
 authorityKeyIdentifier  = keyid,issuer
-authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/TRIALMyTSPG4PKIoPrivGTLSSYS2024.cer
+authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/$ENV::TSPBASENAME.cer
 certificatePolicies     = 2.16.528.1.1003.1.2.41.15.35.11, 0.4.0.2042.1.1
 extendedKeyUsage        = serverAuth, clientAuth
-crlDistributionPoints   = URI:$ENV::CRLURI/TRIALMyTSPG4PKIoPrivGTLSSYS2024.crl
+crlDistributionPoints   = URI:$ENV::CRLURI/$ENV::TSPBASENAME.crl
 subjectAltName          = $ENV::SAN
 subjectKeyIdentifier    = hash
 keyUsage                = critical, digitalSignature, keyEncipherment
 
-[ policy_g4privatetls ]
+[ v3_end_entity_legal ]
+basicConstraints        = critical, CA:false
+authorityKeyIdentifier  = keyid,issuer
+authorityInfoAccess     = caIssuers;URI:$ENV::CERTURI/$ENV::TSPBASENAME.cer
+certificatePolicies     = 2.16.528.1.1003.1.2.41.15.35.11, 0.4.0.2042.1.1
+extendedKeyUsage        = serverAuth, clientAuth
+crlDistributionPoints   = URI:$ENV::CRLURI/$ENV::TSPBASENAME.crl
+subjectAltName          = $ENV::SAN
+subjectKeyIdentifier    = hash
+keyUsage                = critical, digitalSignature, keyEncipherment
+qcStatements            = ASN1:SEQUENCE:qcStatements
+
+[ policy_end_entity ]
 countryName             = supplied
 organizationName        = supplied
+
+[qcStatementWithInfo]
+statementId             = OBJECT:1.3.6.1.5.5.7.11.2     # id-qcs-pkixQCSyntax-v2
+statementInfo           = SEQUENCE:semanticsInfo
+
+[semanticsInfo]
+semanticsIdentifier     = OBJECT:0.4.0.194121.1.2       # id-etsi-qcs-SemanticsId-Legal

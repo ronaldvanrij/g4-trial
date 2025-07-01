@@ -1,8 +1,7 @@
 #!/bin/bash
 
-if test -e "ca"; then
-  echo "Previous test CA already exists, if you'd like to start fresh, remove the ca directory and run this command again" && exit 1
-fi
+# Exit as soon a command fails
+set -e
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
@@ -12,23 +11,28 @@ echo "Create a test CA for the following domain:"
 . "$SCRIPT_DIR"/.includes
 
 # Commands to create the CA structure and certificates:
-mkdir -p ca/{certs,crl,newcerts,private,csr}
-touch ca/index.txt
-echo 1000 > ca/serial
+mkdir -p "$PRIVATE_DIR" "$CERT_DIR" "$CRL_DIR" "$CSR_DIR" "$NEWCERTS_DIR"
+touch "$CA_DIR/index.txt"
+echo 1000 > "$CA_DIR/serial"
 
 # Generate Root CA key and certificate
 # -----------------------------------------
-openssl genpkey ${genpkeyopt} -out "$PRIVATE_DIR/ca.key"
-openssl req ${reqopt} -x509 -key "$PRIVATE_DIR/ca.key" -out "$CERT_DIR/cacert.pem" -extensions v3_ca
 
-rootbasename=$(openssl x509 -in "$CERT_DIR/cacert.pem" -noout -subject -nameopt multiline | grep commonName | cut -d '=' -f2 | tr -d ' -.')
-mv "$PRIVATE_DIR/ca.key" "$PRIVATE_DIR/$rootbasename.key"
-mv "$CERT_DIR/cacert.pem" "$CERT_DIR/$rootbasename.pem"
+if [[ ! -f "$PRIVATE_DIR/ca.key" ]]; then
 
-openssl x509 -in "$CERT_DIR/$rootbasename.pem" -noout -text > "$CERT_DIR/${rootbasename}_text.txt"
+  openssl genpkey ${genpkeyopt} -out "$PRIVATE_DIR/ca.key"
+  openssl req ${reqopt} -x509 -key "$PRIVATE_DIR/ca.key" -out "$CERT_DIR/cacert.pem"
 
-openssl ca ${crlopt} -days ${rootdays} -out "$CRL_DIR/$rootbasename.crl"
-openssl crl -in "$CRL_DIR/$rootbasename.crl" -noout -text > "$CRL_DIR/${rootbasename}_text.txt"
+  rootbasename=$(openssl x509 -in "$CERT_DIR/cacert.pem" -noout -subject -nameopt multiline | grep commonName | cut -d '=' -f2 | tr -d ' -.')
+  mv "$PRIVATE_DIR/ca.key" "$PRIVATE_DIR/$rootbasename.key"
+  mv "$CERT_DIR/cacert.pem" "$CERT_DIR/$rootbasename.pem"
+
+  openssl x509 -in "$CERT_DIR/$rootbasename.pem" -noout -text > "$CERT_DIR/${rootbasename}_text.txt"
+
+  openssl ca ${crlopt} -days ${rootdays} -out "$CRL_DIR/$rootbasename.crl"
+  openssl crl -in "$CRL_DIR/$rootbasename.crl" -noout -text > "$CRL_DIR/${rootbasename}_text.txt"
+
+fi
 
 # Generate and issue Intermediate CA
 # -----------------------------------------
