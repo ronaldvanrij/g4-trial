@@ -1,4 +1,5 @@
 import os
+
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.x509 import load_der_x509_certificate
@@ -29,7 +30,6 @@ class KeyPair:
         return self
 
     def generate_private_key(self, config):
-        print("Generating new private key.")
         self.private_key = rsa.generate_private_key(
             public_exponent=force_int(config['exponent']),
             key_size=force_int(config['publicKeyLength'])
@@ -50,7 +50,6 @@ class KeyPair:
                 serialization.PrivateFormat.TraditionalOpenSSL,
                 serialization.NoEncryption()
             ))
-        print(f"Saved private key to {self.privatekeyfile}")
 
     def __str__(self):
         return f'KeyPair<{self.basename}, {self.privatekeyfile} and {self.certificatefile}>'

@@ -1,0 +1,40 @@
+---
+
+hierarchies:
+  G4 Private Other Generic NP:
+      - profile: profiles/G4RootPrivGOther2024.yaml
+        csr: csr/TRIALPKIoverheidG4RootPrivGOther2024.yaml
+        revocations: revocations/TRIALPKIoverheidG4RootPrivGOther2024.yaml
+      - profile: profiles/G4IntmPrivGOtherNP2024.yaml
+        csr: csr/TRIALPKIoverheidG4IntmPrivGOtherNP2024.yaml
+        revocations: revocations/TRIALPKIoverheidG4IntmPrivGOtherNP2024.yaml
+      - profile: profiles/G4PKIoPrivGOtherNP2025.yaml
+        csr: csr/TRIALMyTSPG4PKIoPrivGOtherNP2025.yaml
+        revocations: revocations/TRIALMyTSPG4PKIoPrivGOtherNP2025.yaml
+
+  G4 Private Other Generic LP:
+    - profile: profiles/G4RootPrivGOther2024.yaml
+      csr: csr/TRIALPKIoverheidG4RootPrivGOther2024.yaml
+    - profile: profiles/G4IntmPrivGOtherLP2024.yaml
+      csr: csr/TRIALPKIoverheidG4IntmPrivGOtherLP2024.yaml
+    - profile: profiles/G4PKIoPrivGOtherLP2025.yaml
+      csr: csr/TRIALMyTSPG4PKIoPrivGOtherLP2025.yaml
+
+endentity:
+  G4 Private Other Generic LP:
+    - label: Organization identified with an OIN
+      profile: G4PKIoPrivGOtherLP2025OIN.yaml
+    - label: Organization identified with an organizationIdentifier
+      profile: G4PKIoPrivGOtherLP2025orgId.yaml
+  G4 Private Other Generic NP:
+    - label: Individual Validated
+      profile: G4PKIoPrivGOtherNP2025IndividualValidated.yaml
+    - label: Regulated Profession
+      profile: G4PKIoPrivGOtherNP2025RegulatedProfession.yaml
+    - label: Sponsor Validated
+      profile: G4PKIoPrivGOtherNP2025SponsorValidated.yaml
+    - label: Regulated Profession with Sponsor Validation
+      profile: G4PKIoPrivGOtherNP2025RegulatedProfessionwithSponsorValidation.yaml
+  G4 Private TLS Generic Devices:
+    - A
+    - B

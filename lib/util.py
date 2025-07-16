@@ -1,6 +1,6 @@
-import yaml
 import sys
 
+import yaml
 from cryptography.hazmat.primitives import hashes
 
 
@@ -69,3 +69,19 @@ def output_errors(errors):
             print(f"- {error['instanceLocation']}: {error['error']}")
         else:
             output_errors(error['errors'])
+
+
+def choose(prompt, options):
+    print(prompt)
+    for i, option in enumerate(options, 1):
+        if isinstance(option, dict):
+            print(f"\t{i}. {option.get('label', str(option))}")
+        else:
+            print(f"\t{i}. {option}")
+
+    while True:
+        choice = input("Enter the number of your choice: ").strip()
+        if choice.isdigit() and 1 <= int(choice) <= len(options):
+            return options[int(choice) - 1]
+        else:
+            print("Invalid choice. Try again.")
