@@ -115,7 +115,7 @@ validations:
       type: string
   required:
   - subject
-  title: Regulated Profession validated
+  title: Private Other have a CN + Natural Persons + Regulated Profession validated
   type: object
 validity:
   notAfter: 365d

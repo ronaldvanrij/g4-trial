@@ -125,7 +125,7 @@ validations:
       type: string
   required:
   - subject
-  title: Legal Persons
+  title: Private Other have a CN + Legal Persons + Organization Validation
   type: object
 validity:
   notAfter: 365d

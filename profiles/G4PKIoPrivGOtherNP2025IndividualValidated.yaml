@@ -114,7 +114,7 @@ validations:
       type: string
   required:
   - subject
-  title: Individual validated
+  title: Private Other have a CN + Natural Persons
   type: object
 validity:
   notAfter: 365d

@@ -85,18 +85,41 @@ validations:
       type: string
     subject:
       additionalProperties: false
+      oneOf:
+      - not:
+          required:
+          - organizationIdentifier
+        required:
+        - serialNumber
+      - not:
+          required:
+          - serialNumber
+        required:
+        - organizationIdentifier
       properties:
         C:
           const: NL
           type: string
+        O:
+          maxLength: 64
+          minLength: 2
+          type: string
+        organizationIdentifier:
+          maxLength: 64
+          type: string
+        serialNumber:
+          maxLength: 64
+          type: string
       required:
       - C
+      - O
       type: object
     trailerField:
       const: 0x01 / 0xBC (default)
       type: string
   required:
   - subject
+  title: Organization Validation
   type: object
 validity:
   notAfter: 365d
