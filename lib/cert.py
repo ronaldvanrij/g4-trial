@@ -167,14 +167,14 @@ def sign(profile, csr, subject_keys, issuer_keys):
     # Validity
     if profile['validity']['notBefore'] == 'now':
         not_before = datetime.now()
-    else: # assume date time format
+    else:  # assume date time format
         not_before = datetime.fromisoformat(profile['validity']['notBefore'])
 
     match = re.match("^([0-9]+)d$", profile['validity']['notAfter'])
     if match:
         # last second is inclusive, therefore substract one second
         not_after = not_before + timedelta(days=int(match.group(1))) - timedelta(seconds=1)
-    else: # assume date time format
+    else:  # assume date time format
         not_after = datetime.fromisoformat(profile['validity']['not_after'])
 
     # Generate a random Serial number
@@ -214,75 +214,70 @@ def sign(profile, csr, subject_keys, issuer_keys):
     return cert
 
 
-def process(profilefile, csrfiles):
+def process(profilefile, csrfile):
 
+    # Load all YAML files
     profile = load_yaml(profilefile)
     postprocess_yaml(profile)
 
-    # Validate all CSRs first
-    for csrfile in csrfiles:
-        csr = load_yaml(csrfile)
+    csr = load_yaml(csrfile)
+    postprocess_yaml(csr)
 
-        # Validate CSR against the certificate profile
-        if 'validations' in profile:
-            catalog = create_catalog("2020-12")
-            schema = JSONSchema(profile['validations'])
-            instance = JSON(csr)
-            result = schema.evaluate(instance)
-            if not result.valid:
-                print(f"CSR {csrfile} is invalid for profile {profilefile} ❌")
-                output_errors(result.output("detailed")["errors"])
-                exit(1)
-        else:
-            print(f'WARN: no validation for CSR {csrfile}')
+    # Validate CSR against the certificate profile
+    if 'validations' in profile:
+        catalog = create_catalog("2020-12")
+        schema = JSONSchema(profile['validations'])
+        instance = JSON(csr)
+        result = schema.evaluate(instance)
+        if not result.valid:
+            print(f"CSR {csrfile} is invalid for profile {profilefile} ❌")
+            output_errors(result.output("detailed")["errors"])
+            exit(1)
+    else:
+        print(f'WARN: no validation for CSR {csrfile}')
 
-    # Then process the CSRs against the specified certificate profile
-    for csrfile in csrfiles:
-        csr = load_yaml(csrfile)
-        postprocess_yaml(csr)
+    selfsigned = profile['issuer'] == csr['subject']
 
-        selfsigned = profile['issuer'] == csr['subject']
+    # Find issuer keypair by name
+    issuername = profile['issuer'].generate_basename()
+    issuerKeys = KeyPair(issuername)
 
-        # Find issuer keypair by name
-        issuername = profile['issuer'].generate_basename()
-        issuerKeys = KeyPair(issuername)
+    if not selfsigned and not os.path.exists(issuerKeys.certificatefile):
+        # If keys for a self-signed do not exist, we'll create them later
+        print(f"Cannot find keys of {issuerKeys} for signing operation, please generate it first")
+        return
 
-        if not selfsigned and not os.path.exists(issuerKeys.certificatefile):
-            # If keys for a self-signed do not exist, we'll create them later
-            print(f"Cannot find keys of {issuerKeys} for signing operation, please generate it first")
-            continue
+    try:
+        issuerKeys.load()
+    except FileNotFoundError:
+        issuerKeys.generate_private_key(profile)
+
+    if selfsigned:
+        subjectKeys = issuerKeys
+
+        if os.path.exists(subjectKeys.certificatefile):
+            print(f"Certificate {subjectKeys.basename} already exists, skipping")
+            return
+
+    else:
+        # Find cert private key - use the same name as the input YAML file
+        basename = pathlib.Path(csrfile).stem
+        subjectKeys = KeyPair(basename)
+
+        if os.path.exists(subjectKeys.certificatefile):
+            print(f"Certificate {basename} already exists, skipping")
+            return
 
         try:
-            issuerKeys.load()
+            subjectKeys.load()
         except FileNotFoundError:
-            issuerKeys.generate_private_key(profile)
+            subjectKeys.generate_private_key(profile)
 
-        if selfsigned:
-            subjectKeys = issuerKeys
+    cert = sign(profile, csr, subjectKeys, issuerKeys)
 
-            if os.path.exists(subjectKeys.certificatefile):
-                print(f"Certificate {subjectKeys.basename} already exists, skipping")
-                continue
+    # Write issued certificate to disk
+    filename = subjectKeys.certificatefile
+    with open(filename, "wb") as f:
+        f.write(cert.public_bytes(serialization.Encoding.DER))
 
-        else:
-            # Find cert private key - use the same name as the input YAML file
-            basename = pathlib.Path(csrfile).stem
-            subjectKeys = KeyPair(basename)
-
-            if os.path.exists(subjectKeys.certificatefile):
-                print(f"Certificate {basename} already exists, skipping")
-                continue
-
-            try:
-                subjectKeys.load()
-            except FileNotFoundError:
-                subjectKeys.generate_private_key(profile)
-
-        cert = sign(profile, csr, subjectKeys, issuerKeys)
-
-        # Write issued certificate to disk
-        filename = subjectKeys.certificatefile
-        with open(filename, "wb") as f:
-            f.write(cert.public_bytes(serialization.Encoding.DER))
-
-        print(f"Certificate issued and saved to {filename}")
+    print(f"Certificate issued and saved to {filename}")

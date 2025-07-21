@@ -9,4 +9,5 @@ if __name__ == "__main__":
     parser.add_argument('csrfiles', nargs='+', help="YAML Certificate Signing Requests to be signed")
     args = parser.parse_args()
 
-    cert.process(args.profile, args.csrfiles)
+    for csrfile in args.csrfiles:
+        cert.process(args.profile, csrfile)

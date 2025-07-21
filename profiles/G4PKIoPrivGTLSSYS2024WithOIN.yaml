@@ -1,0 +1,97 @@
+---
+exponent: 65537 (0x10001)
+extensions:
+  authorityInfoAccess:
+    caIssuers: http://cert.pkioverheid.nl/TRIALMyTSPG4PKIoPrivGTLSSYS2025.cer
+    critical: false
+    oid: 1.3.6.1.5.5.7.1.1
+  authorityKeyIdentifier:
+    critical: false
+    oid: 2.5.29.35
+    value: match_issuer
+  basicConstraints:
+    cA: false
+    critical: true
+    oid: 2.5.29.19
+  cRLDistributionPoints:
+    critical: false
+    oid: 2.5.29.31
+    value:
+    - http://crl.pkioverheid.nl/TRIALMyTSPG4PKIoPrivGTLSSYS2025.crl
+  certificatePolicies:
+    critical: false
+    oid: 2.5.29.32
+    value:
+    - name: ncp
+      oid: 0.4.0.2042.1.1
+    - name: id-pkio-cp-g4d-gen10PrvTLS-sysOrg-tls
+      oid: 2.16.528.1.1003.1.2.41.15.35.11
+  extendedKeyUsage:
+    critical: false
+    oid: 2.5.29.37
+    value:
+    - name: id-kp-serverAuth
+      oid: 1.3.6.1.5.5.7.3.1
+    - name: id-kp-clientAuth
+      oid: 1.3.6.1.5.5.7.3.2
+  keyUsage:
+    critical: true
+    oid: 2.5.29.15
+    value:
+    - digitalSignature
+    - keyEncipherment
+  subjectAltNames:
+    critical: false
+    oid: 2.5.29.17
+    value:
+    - example-with-OIN.com
+    - www.example-with-OIN.com
+  subjectKeyIdentifier:
+    critical: false
+    oid: 2.5.29.14
+    value: RFC5280 - Method 1
+hashAlgorithm: sha512
+issuer: !DN
+- C: NL
+- O: My TSP - not for Production use
+- CN: TRIAL My TSP - G4 PKIo Priv G-TLS SYS - 2025
+- organizationIdentifier: NTRNL-99999990
+maskAlgorithm: Mgf1 with sha512
+publicKeyAlgorithm: rsaEncryption
+publicKeyLength: 4096 bit
+saltLength: '0x40'
+serialNumber: Randomly generated (20 octets) -- Unique Positive Integer
+signatureAlgorithm: rsassaPss
+trailerField: 0x01 / 0xBC (default)
+validations:
+  $schema: https://json-schema.org/draft/2020-12/schema
+  additionalProperties: false
+  properties:
+    maskAlgorithm:
+      const: Mgf1 with sha512
+      type: string
+    saltLength:
+      const: '0x40'
+      type: string
+    signatureAlgorithm:
+      const: rsassaPss
+      type: string
+    subject:
+      additionalProperties: false
+      properties:
+        C:
+          const: NL
+          type: string
+      required:
+      - C
+      type: object
+    trailerField:
+      const: 0x01 / 0xBC (default)
+      type: string
+  required:
+  - subject
+  type: object
+validity:
+  notAfter: 365d
+  notBefore: now
+version: 3 (0x2)
