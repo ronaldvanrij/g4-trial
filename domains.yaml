@@ -2,7 +2,7 @@
 
 domains:
 
-  G4 Private Other TLS:
+  G4 Private TLS:
     hierarchy:
       - profile: profiles/G4RootPrivGTLS2024.yaml
         csr: csr/TRIALPKIoverheidG4RootPrivGTLS2024.yaml

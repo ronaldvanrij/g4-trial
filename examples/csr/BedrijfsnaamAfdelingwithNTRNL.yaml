@@ -1,0 +1,6 @@
+---
+subject: !DN
+- C: NL
+- O: Bedrijfsnaam
+- CN: Bedrijfsnaam - Afdeling with NTRNL
+- organizationIdentifier: NTRNL-99999991

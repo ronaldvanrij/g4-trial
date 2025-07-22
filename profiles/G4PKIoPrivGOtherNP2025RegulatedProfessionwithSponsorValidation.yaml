@@ -76,15 +76,6 @@ validations:
   $schema: https://json-schema.org/draft/2020-12/schema
   additionalProperties: false
   properties:
-    maskAlgorithm:
-      const: Mgf1 with sha512
-      type: string
-    saltLength:
-      const: '0x40'
-      type: string
-    signatureAlgorithm:
-      const: rsassaPss
-      type: string
     subject:
       additionalProperties: false
       properties:
@@ -125,9 +116,6 @@ validations:
       - serialNumber
       - title
       type: object
-    trailerField:
-      const: 0x01 / 0xBC (default)
-      type: string
   required:
   - subject
   title: Private Other have a CN + Natural Persons + Regulated Profession with Sponsor
