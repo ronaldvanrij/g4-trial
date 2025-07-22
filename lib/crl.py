@@ -118,4 +118,4 @@ def process(revocation, force=False):
     with open(filename, "wb") as f:
         f.write(crl.public_bytes(serialization.Encoding.DER))
 
-    print(f"CRL signed {len(profile['revocations'])} revocations and saved to {filename}")
+    print(f"CRL signed containing {len(profile['revocations'])} revocations and saved to {filename}")

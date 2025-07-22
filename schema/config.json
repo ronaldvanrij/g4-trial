@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "caIssuersBaseUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Base URL for CA Issuers, e.g., where certificates are published."
+    },
+    "cRLDistributionPointsBaseUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Base URL for CRL distribution points, e.g., where CRLs are available."
+    }
+  },
+  "required": ["caIssuersBaseUrl", "cRLDistributionPointsBaseUrl"],
+  "additionalProperties": false
+}

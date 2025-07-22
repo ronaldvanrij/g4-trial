@@ -1,0 +1,2 @@
+caIssuersBaseUrl: http://localhost/cer
+cRLDistributionPointsBaseUrl: http://localhost/crl

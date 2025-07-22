@@ -18,10 +18,10 @@ domains:
 
     endentity:
       - label: Organization Validated using an OIN
-        profile: G4PKIoPrivGTLSSYS2025WithOIN.yaml
+        profile: profiles/G4PKIoPrivGTLSSYS2025WithOIN.yaml
 
       - label: Organization Validated using an organizationIdentifier
-        profile: G4PKIoPrivGTLSSYS2025WithorganizationIdentifier.yaml
+        profile: profiles/G4PKIoPrivGTLSSYS2025WithorganizationIdentifier.yaml
 
   G4 Private Other Generic NP:
     hierarchy:
@@ -39,16 +39,16 @@ domains:
 
     endentity:
       - label: Individual Validated
-        profile: G4PKIoPrivGOtherNP2025IndividualValidated.yaml
+        profile: profiles/G4PKIoPrivGOtherNP2025IndividualValidated.yaml
 
       - label: Regulated Profession
-        profile: G4PKIoPrivGOtherNP2025RegulatedProfession.yaml
+        profile: profiles/G4PKIoPrivGOtherNP2025RegulatedProfession.yaml
 
       - label: Sponsor Validated
-        profile: G4PKIoPrivGOtherNP2025SponsorValidated.yaml
+        profile: profiles/G4PKIoPrivGOtherNP2025SponsorValidated.yaml
 
       - label: Regulated Profession with Sponsor Validation
-        profile: G4PKIoPrivGOtherNP2025RegulatedProfessionwithSponsorValidation.yaml
+        profile: profiles/G4PKIoPrivGOtherNP2025RegulatedProfessionwithSponsorValidation.yaml
 
   G4 Private Other Generic LP:
     hierarchy:
@@ -66,7 +66,7 @@ domains:
 
     endentity:
       - label: Organization identified with an OIN
-        profile: G4PKIoPrivGOtherLP2025OIN.yaml
+        profile: profiles/G4PKIoPrivGOtherLP2025OIN.yaml
 
       - label: Organization identified with an organizationIdentifier
-        profile: G4PKIoPrivGOtherLP2025orgId.yaml
+        profile: profiles/G4PKIoPrivGOtherLP2025orgId.yaml

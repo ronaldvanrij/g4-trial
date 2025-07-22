@@ -1,7 +1,9 @@
+import os
 import sys
 
 import yaml
 from cryptography.hazmat.primitives import hashes
+from jschon import create_catalog, JSONSchema, JSON
 
 
 def force_int(value):
@@ -85,3 +87,18 @@ def choose(prompt, options):
             return options[int(choice) - 1]
         else:
             print("Invalid choice. Try again.")
+
+def load_config():
+    config = load_yaml("config.yaml")
+
+    create_catalog("2020-12")
+    schema = JSONSchema.loadf(os.path.join('schema', 'config.json'))
+
+    instance = JSON(config)
+    result = schema.evaluate(instance)
+    if not result.valid:
+        print(f"Configuration file config.yaml is invalid: ")
+        output_errors(result.output("detailed")["errors"])
+        exit(1)
+
+    return config

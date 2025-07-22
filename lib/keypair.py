@@ -12,7 +12,7 @@ class KeyPair:
     BASEDIR = 'ca'
 
     privatekeyfile = property(lambda self: os.path.join(self.BASEDIR, 'private', f'{self.basename}.key'))
-    certificatefile = property(lambda self: os.path.join(self.BASEDIR, 'certs', f'{self.basename}.crt'))
+    certificatefile = property(lambda self: os.path.join(self.BASEDIR, 'certs', f'{self.basename}.cer'))
 
     def __init__(self, basename):
         self.basename = basename

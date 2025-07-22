@@ -13,7 +13,7 @@ from jschon import create_catalog, JSON, JSONSchema
 
 from .dn import postprocess_yaml
 from .keypair import KeyPair
-from .util import load_yaml, force_int, get_hash_algo, output_errors
+from .util import load_yaml, force_int, get_hash_algo, output_errors, keys_exist
 
 
 def parse_oid(oid_or_dict):
@@ -214,7 +214,7 @@ def sign(profile, csr, subject_keys, issuer_keys):
     return cert
 
 
-def process(profilefile, csrfile):
+def process(profilefile, csrfile, config):
 
     # Load all YAML files
     profile = load_yaml(profilefile)
@@ -272,6 +272,12 @@ def process(profilefile, csrfile):
             subjectKeys.load()
         except FileNotFoundError:
             subjectKeys.generate_private_key(profile)
+
+    # Some proposed certificate values contain placeholders, replace them here to keep the sign funcion clean
+    if keys_exist(profile, ['extensions', 'authorityInfoAccess', 'caIssuers']):
+        profile['extensions']['authorityInfoAccess']['caIssuers'] = profile['extensions']['authorityInfoAccess']['caIssuers'] % config['caIssuersBaseUrl']
+    if keys_exist(profile, ['extensions', 'cRLDistributionPoints', 'value']):
+        profile['extensions']['cRLDistributionPoints']['value'] = [value % config['cRLDistributionPointsBaseUrl'] for value in profile['extensions']['cRLDistributionPoints']['value']]
 
     cert = sign(profile, csr, subjectKeys, issuerKeys)
 
