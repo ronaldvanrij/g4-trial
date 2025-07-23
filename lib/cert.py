@@ -108,6 +108,10 @@ def handle_extensions(builder, ext, subject_keys, ca_keys):
             critical=ext['extendedKeyUsage'].get('critical', False)
         )
 
+    if 'qcStatements' in ext:
+        qc_ext = build_qc_statements_extension(ext['qcStatements'])
+        builder = builder.add_extension(qc_ext, critical=ext['qcStatements'].get('critical', False))
+
     if 'cRLDistributionPoints' in ext:
         uris = ext['cRLDistributionPoints'].get('value', [])
         points = [
@@ -154,10 +158,6 @@ def handle_extensions(builder, ext, subject_keys, ca_keys):
             x509.SubjectAlternativeName(dns_names),
             critical=ext['subjectAltNames'].get('critical', False)
         )
-
-    if 'qcStatements' in ext:
-        qc_ext = build_qc_statements_extension(ext['qcStatements'])
-        builder = builder.add_extension(qc_ext, critical=ext['qcStatements'].get('critical', False))
 
     return builder
 
