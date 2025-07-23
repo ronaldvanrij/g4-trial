@@ -60,61 +60,67 @@ Currently, only the following [G4 Domains](https://cp.pkioverheid.nl/pkioverheid
 - G4 Private Other Generic Natural Persons
 - G4 Private Other Generic Legal Persons
 
+## Installation
+
+1. Clone this repository locally
+2. You will need Python >3.0 installed. If not already installed, please follow the instructions for your operating system at https://www.python.org.
+3. To be able to install additional libraries, you will need to install Pip. For instructions please refer to https://packaging.python.org/en/latest/tutorials/installing-packages/
+4. (optional) create and activate a virtualenv, see previous hyperlink
+5. Install the packages this repository requires: 
+   ```bash
+   pip install -r requirements.txt
+   ```
+
 # Usage
 
 ## Create top level hierarchy
 
-First create the top three layers of the CA hierarchy for a [G4 Domain](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__11-overview). These are the self-signed Root CA, Domain CA and Issuing (TSP) CA. This command creates a private key, certificate and an (empty) Certificate Revocation List (CSR). When run, the script will prompt for the specific PKIoverheid G4 domain.  
+First create the top three layers of the CA hierarchy for a [G4 Domain](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__11-overview). These are the self-signed Root CA, Domain CA and Issuing (TSP) CA. This command will prompt which for which PKIoverheid G4 domain you'd like to create the private key, certificate and its (empty) Certificate Revocation List (CSR). 
 
 ```bash
-bash create_ca.sh
+python create_ca.py
 ```
 
 ## Create end entity certificates
 
 Each end entity certificate requires subject information to be provided separately. This information is provided using a YAML file. Please see any of the files in the `examples/csr` directory.  
 
-Depending on certificate type the `subject` field must contain certain attributes, while others are prohibited. The script will validate your file and output any discrepancies. No validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field.
-
-
-
-Create a new text file to indicate which end entity certificates need to be created. This repository contains a sample file `endentitysample.txt` which you can copy and modify. The script will prompt for the specific PKIoverheid G4 domain, which must have been created earlier. If your file is named `filename.txt`, then run:  
+Depending on certificate type the `subject` field must contain certain attributes, while others are prohibited. The script will validate your file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field.
 
 ```bash
-bash create_endentity.sh -f filename.txt
+python create_endentity.py <one or more YAML CSR files>
 ```
 
 The newly generated private keys are located in the `ca/private` directory and the certificates in the `ca/certs` directory. Use as appropriate.
 
-If you'd like to host the certificates (as specified in the `authorityInfoAccess` extension) and CRLs (as specified in the `crlDistributionPoints` extension) on the localhost, you can start a minimal webserver:
+If you'd like to host the CA certificates (as specified in the `authorityInfoAccess` extension) and CRLs (as specified in the `crlDistributionPoints` extension) on the localhost, you can start a minimal webserver:
 
 ```bash
 bash start_server.sh
 ```
 
-If you intend to host the certificates and CRLs on another domain use environment variables to modify. For example:
+If you intend to host the certificates and CRLs on another domain modify the `config.yaml` file accordingly. For example:
 
-```bash
-CRLURI=http://crl.example.com CERTURI=http://cert.example.com ./create_ca.sh 
+```yaml
+caIssuersBaseUrl: http://localhost/cer
+cRLDistributionPointsBaseUrl: http://localhost/crl
 ```
 
 # File list
 
-| Filename                                    | Description                                                             |
-|---------------------------------------------|-------------------------------------------------------------------------|
-| `create_ca.sh`                              | Script to create the top level CA private keys and certificates         |
-| `create_endentity.sh`                       | Script to create any number of end entity private keys and certificates |
-| `start_server.sh`                           | A minimal webserver to host generated certificates and CRLs             |
-| `ca/private/*.key`                          | Generated private keys                                                  |        
-| `ca/certs/*.pem`                            | Issued certificates                                                     |
-| `ca/certs/*.txt`                            | Textual representation of the issued certificates                       |
-| `ca/crl/*.crl`                              | CRLs for the generated CA certificates                                  |
-| `ca/crl/*.txt`                              | Textual representation of the CRLs created                              |
+| Filename              | Description                                                             |
+|-----------------------|-------------------------------------------------------------------------|
+| `create_ca.py`        | Script to create the top level CA private keys and certificates         |
+| `create_endentity.py` | Script to create any number of end entity private keys and certificates |
+| `start_server.sh`     | A minimal webserver to host generated certificates and CRLs             |
+| `ca/private/*.key`    | Generated private keys                                                  |
+| `ca/certs/*.pem`      | Issued certificates                                                     |
+| `ca/crl/*.crl`        | CRLs for the generated CA certificates                                  |
+| `examples/csr`        | Example YAML CSR files to create end entity certificates                |
 
 # Requirements
 
-- Any openSSL version > 3.0 should suffice
-- Python > 3.0 is required for the minimal webserver hosting CRLs and certificates 
+- Python >3.0 is required for the minimal webserver hosting CRLs and certificates 
 
 # Support & Contributing
 
