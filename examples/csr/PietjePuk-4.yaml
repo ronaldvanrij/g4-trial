@@ -1,10 +1,10 @@
 ---
-subject: !DN
-- C: NL
-- O: Bedrijfsnaam B.V.
-- SN: Puk
-- GN: Pietje
-- CN: Pietje Puk
-- organizationIdentifier: NTRNL-99999999
-- serialNumber: abcdef1
-- title: Rangeerder
+subject:
+  C: NL
+  O: Bedrijfsnaam B.V.
+  SN: Puk
+  GN: Pietje
+  CN: Pietje Puk
+  organizationIdentifier: NTRNL-99999999
+  serialNumber: abcdef1
+  title: Rangeerder

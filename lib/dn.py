@@ -94,7 +94,7 @@ class DN(OrderedDict):
 
     def as_rfc4514_dotted_string(self):
         """
-        Returns this DN as an RFC 4514 string.
+        Returns this DN as an ordered RFC 4514 string.
         Please note:
          1. Components are comma separated
          2. The order is reversed to the slash '/' separated strings

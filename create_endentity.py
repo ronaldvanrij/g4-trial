@@ -1,8 +1,8 @@
 import argparse
-import os
 
 from lib import cert
 from lib.util import load_yaml, choose, load_config
+from lib.domains import verify
 
 
 def main():
@@ -14,6 +14,8 @@ def main():
     config = load_config()
 
     options = load_yaml("domains.yaml")['domains']
+    if not verify(options):
+        exit(1)
 
     domain = choose("Choose domain:", list(options.keys()))
     cert_type = choose("Choose certificate type:", options[domain]['endentity'])

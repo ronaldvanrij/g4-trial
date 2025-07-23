@@ -1,8 +1,8 @@
 ---
-subject: !DN
-- C: NL
-- SN: Puk
-- GN: Pietje
-- CN: Pietje Puk
-- serialNumber: abcdef1
-- title: Rangeerder
+subject:
+  C: NL
+  SN: Puk
+  GN: Pietje
+  CN: Pietje Puk
+  serialNumber: abcdef1
+  title: Rangeerder
