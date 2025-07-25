@@ -60,11 +60,11 @@ extensions:
     oid: 2.5.29.14
     value: RFC5280 - Method 1
 hashAlgorithm: sha512
-issuer: !DN
-- C: NL
-- O: My TSP - not for Production use
-- CN: TRIAL My TSP - G4 PKIo Priv G-Other NP - 2025
-- organizationIdentifier: NTRNL-99999990
+issuer: 
+  C: NL
+  O: My TSP - not for Production use
+  CN: TRIAL My TSP - G4 PKIo Priv G-Other NP - 2025
+  organizationIdentifier: NTRNL-99999990
 maskAlgorithm: Mgf1 with sha512
 publicKeyAlgorithm: rsaEncryption
 publicKeyLength: 4096 bit

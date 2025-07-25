@@ -2,7 +2,6 @@ import os
 import sys
 
 import yaml
-from cryptography.hazmat.primitives import hashes
 from jschon import create_catalog, JSONSchema, JSON
 
 
@@ -17,31 +16,9 @@ def force_int(value):
     return value
 
 
-def get_hash_algo(name):
-    name = name.lower()
-    return {
-        'sha512': hashes.SHA512(),
-        'sha384': hashes.SHA384(),
-        'sha256': hashes.SHA256(),
-    }[name]
-
-
 def load_yaml(filename):
     with open(filename, 'r') as f:
         return yaml.safe_load(f)
-
-
-def load_yaml_merged(filename):
-    """
-    Some YAML files may contain several documents. Collapse them
-    :param filename:
-    :return:
-    """
-    with open(filename, 'r') as f:
-        docs = yaml.safe_load_all(f)
-        merged = {}
-        [merged.update(doc) for doc in docs if doc]
-        return merged
 
 
 def keys_exist(d, path):
@@ -87,6 +64,7 @@ def choose(prompt, options):
             return options[int(choice) - 1]
         else:
             print("Invalid choice. Try again.")
+
 
 def load_config():
     config = load_yaml("config.yaml")

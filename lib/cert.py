@@ -5,21 +5,23 @@ from datetime import datetime, timedelta
 
 from asn1crypto.core import Sequence, ObjectIdentifier as Asn1OID, SequenceOf
 from cryptography import x509
-from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives import serialization, hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.x509 import UnrecognizedExtension
 from cryptography.x509.oid import ObjectIdentifier
 from jschon import create_catalog, JSON, JSONSchema
 
-from .dn import postprocess_yaml
+from .dn import as_name, generate_basename
 from .keypair import KeyPair
-from .util import load_yaml, force_int, get_hash_algo, output_errors, keys_exist
+from .util import load_yaml, force_int, output_errors, keys_exist
 
 
-def parse_oid(oid_or_dict):
-    if isinstance(oid_or_dict, dict):
-        return ObjectIdentifier(oid_or_dict["oid"])
-    return ObjectIdentifier(oid_or_dict)
+def get_hash_algo(name):
+    return {
+        'sha512': hashes.SHA512(),
+        'sha384': hashes.SHA384(),
+        'sha256': hashes.SHA256(),
+    }[name.lower()]
 
 
 def build_qc_statements_extension(qc_data):
@@ -186,11 +188,11 @@ def sign(profile, csr, subject_keys, issuer_keys):
     # Certificate Builder
     builder = x509.CertificateBuilder()
     try:
-        builder = builder.subject_name(csr['subject'].as_name())
+        builder = builder.subject_name(as_name(csr['subject']))
     except Exception as e:
         print(csr['subject'])
         raise e
-    builder = builder.issuer_name(profile['issuer'].as_name())
+    builder = builder.issuer_name(as_name(profile['issuer']))
     builder = builder.public_key(subject_keys.public_key)
     builder = builder.serial_number(serial_number)
     builder = builder.not_valid_before(not_before)
@@ -218,10 +220,7 @@ def process(profilefile, csrfile, config):
 
     # Load all YAML files
     profile = load_yaml(profilefile)
-    postprocess_yaml(profile)
-
     csr = load_yaml(csrfile)
-    postprocess_yaml(csr)
 
     # Validate CSR against the certificate profile
     if 'validations' in profile:
@@ -239,7 +238,7 @@ def process(profilefile, csrfile, config):
     selfsigned = profile['issuer'] == csr['subject']
 
     # Find issuer keypair by name
-    issuername = profile['issuer'].generate_basename()
+    issuername = generate_basename(profile['issuer'])
     issuerKeys = KeyPair(issuername)
 
     if not selfsigned and not os.path.exists(issuerKeys.certificatefile):
