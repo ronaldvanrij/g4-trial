@@ -1,2 +1,2 @@
-caIssuersBaseUrl: http://localhost/cer
-cRLDistributionPointsBaseUrl: http://localhost/crl
+caIssuersBaseUrl: http://localhost:8080/certs
+cRLDistributionPointsBaseUrl: http://localhost:8080/crl

@@ -63,9 +63,9 @@ Currently, only the following [G4 Domains](https://cp.pkioverheid.nl/pkioverheid
 ## Installation
 
 1. Clone this repository locally
-2. You will need Python >3.0 installed. If not already installed, please follow the instructions for your operating system at https://www.python.org.
-3. To be able to install additional libraries, you will need to install Pip. For instructions please refer to https://packaging.python.org/en/latest/tutorials/installing-packages/
-4. (optional) create and activate a virtualenv, see previous hyperlink
+2. You will need Python >3.7 installed. If not already installed, please follow the instructions for your operating system at https://www.python.org;
+3. To be able to install additional libraries, you will need to install `pip`. For instructions please refer to https://packaging.python.org/en/latest/tutorials/installing-packages/;
+4. (optional) create and activate a virtualenv, see previous hyperlink;
 5. Install the packages this repository requires: 
    ```bash
    pip install -r requirements.txt
@@ -85,7 +85,7 @@ python create_ca.py
 
 Each end entity certificate requires subject information to be provided separately. This information is provided using a YAML file. Please see any of the files in the `examples/csr` directory.  
 
-Depending on certificate type the `subject` field must contain certain attributes, while others are prohibited. The script will validate your file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field.
+Depending on certificate type the `subject` field must contain certain attributes, while others are prohibited. The script will validate your file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field. When run, the script will prompt for which domain the certificate will be signed for. 
 
 ```bash
 python create_endentity.py <one or more YAML CSR files>
@@ -120,7 +120,7 @@ cRLDistributionPointsBaseUrl: http://localhost/crl
 
 # Requirements
 
-- Python >3.0 is required for the minimal webserver hosting CRLs and certificates 
+- Python >3.7 
 
 # Support & Contributing
 
