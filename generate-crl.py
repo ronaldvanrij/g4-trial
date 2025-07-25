@@ -1,5 +1,6 @@
 import argparse
 
+from lib.util import load_yaml
 from lib import crl
 
 
@@ -9,8 +10,10 @@ def main():
     parser.add_argument('revocations', nargs='+', help="Generate CRLs for these files")
     args = parser.parse_args()
 
+    config = load_yaml("config.yaml")
+
     for revocation in args.revocations:
-        crl.process(revocation, args.force)
+        crl.process(revocation, config, args.force)
 
 
 if __name__ == "__main__":

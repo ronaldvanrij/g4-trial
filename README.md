@@ -78,7 +78,7 @@ Currently, only the following [G4 Domains](https://cp.pkioverheid.nl/pkioverheid
 First create the top three layers of the CA hierarchy for a [G4 Domain](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__11-overview). These are the self-signed Root CA, Domain CA and Issuing (TSP) CA. This command will prompt which for which PKIoverheid G4 domain you'd like to create the private key, certificate and its (empty) Certificate Revocation List (CSR). 
 
 ```bash
-python create_ca.py
+python create-ca.py
 ```
 
 ## Create end entity certificates
@@ -88,23 +88,35 @@ Each end entity certificate requires subject information to be provided separate
 Depending on certificate type the `subject` field must contain certain attributes, while others are prohibited. The script will validate your file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field. When run, the script will prompt for which domain the certificate will be signed for. 
 
 ```bash
-python create_endentity.py <one or more YAML CSR files>
+python create-endentity.py <one or more YAML CSR files>
 ```
 
 The newly generated private keys are located in the `ca/private` directory and the certificates in the `ca/certs` directory. Use as appropriate.
 
-If you'd like to host the CA certificates (as specified in the `authorityInfoAccess` extension) and CRLs (as specified in the `crlDistributionPoints` extension) on the localhost, you can start a minimal webserver:
+## Revocations
+
+When CA certificates are created, an associated Certificate Revocation List (CRL) is automatically created. By default no certificates are revoked. However, to test revocation checking, you may want to generate some certificates and revoke them. 
+
+If you'd like to host the CA certificates (as specified in the certificate's `authorityInfoAccess` extension) and CRLs (as specified in the `crlDistributionPoints` extension) on your local machine, you can start a minimal webserver:
 
 ```bash
-bash start_server.sh
+bash start-server.sh
 ```
 
-If you intend to host the certificates and CRLs on another domain modify the `config.yaml` file accordingly. For example:
+If you intend to host the certificates and CRLs on another domain modify the `config.yaml` file accordingly. You must recreate the certificates for these values to be encoded in the certificates. An example configuration could be: 
 
 ```yaml
-caIssuersBaseUrl: http://localhost/cer
-cRLDistributionPointsBaseUrl: http://localhost/crl
+caIssuersBaseUrl: http://cert.mydomain.com
+cRLDistributionPointsBaseUrl: http://crl.mydomain.com
 ```
+
+In the `revocations` directory you'll find a YAML file for each CA certificate created. Please refer to the directory `examples/revocations` for example files. When you've updated this file, regenerate the CRL:
+
+```bash
+python generate-crl.py <revocation file>
+```
+
+The Programme of Requirements dictates that CRLs must be renewed (regenerated) at least each 48 hours, and this has been set as default. For testing purposes you may change this setting in `config.yaml`. 
 
 # File list
 
@@ -116,7 +128,7 @@ cRLDistributionPointsBaseUrl: http://localhost/crl
 | `ca/private/*.key`    | Generated private keys                                                  |
 | `ca/certs/*.pem`      | Issued certificates                                                     |
 | `ca/crl/*.crl`        | CRLs for the generated CA certificates                                  |
-| `examples/csr`        | Example YAML CSR files to create end entity certificates                |
+| `examples`            | Example files to create end entity certificates and revocation lists    |
 
 # Requirements
 
