@@ -52,10 +52,10 @@ extensions:
     oid: 2.5.29.14
     value: RFC5280 - Method 1
 hashAlgorithm: sha512
-issuer: 
+issuer:
   C: NL
-  O: TRIAL PKIoverheid - not for Production use
   CN: TRIAL PKIoverheid - G4 Root Priv G-TLS - 2024
+  O: TRIAL PKIoverheid - not for Production use
 maskAlgorithm: Mgf1 with sha512
 publicKeyAlgorithm: rsaEncryption
 publicKeyLength: 4096 bit
