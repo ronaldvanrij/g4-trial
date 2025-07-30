@@ -16,12 +16,12 @@ def main():
 
     # Creating a hierarchy means creating a number of keys
     for layer in options[hierarchy]['hierarchy']:
-        cert.process(layer['profile'], layer['csr'], config)
-        crl.process(layer['revocations'], force=True)
+        cert.process(load_yaml(layer['profile']), load_yaml(layer['enrollment']), layer['enrollment'], config)
+        crl.process(layer['revocations'], config, force=True)
 
     print(f'To automate this step, run next time:')
     for layer in options[hierarchy]['hierarchy']:
-        print(f'python generate-cert.py "{layer['profile']}" "{layer['csr']}"')
+        print(f'python generate-cert.py "{layer['enrollment']}"')
         print(f'python generate-crl.py --force "{layer['revocations']}"')
 
 

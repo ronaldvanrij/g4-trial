@@ -10,7 +10,7 @@ def verify(data):
         for domain, content in data.items():
             # Check hierarchy items
             for item in content.get('hierarchy', []):
-                for key in ('profile', 'csr', 'revocations'):
+                for key in ('profile', 'enrollment', 'revocations'):
                     if key in item:
                         paths.append(item[key])
 

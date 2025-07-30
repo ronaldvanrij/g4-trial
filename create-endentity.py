@@ -23,10 +23,10 @@ def main():
     profilefile = cert_type['profile']
 
     print(f'To automate this step, run next time:')
-    print(f'python generate-cert.py "{profilefile}" {' '.join([f'"{enrollment}"' for enrollment in args.enrollments])}')
+    print(f'python generate-cert.py --profile-override "{profilefile}" {' '.join([f'"{enrollment}"' for enrollment in args.enrollments])}')
 
     for enrollment in args.enrollments:
-        cert.process(profilefile, enrollment, config)
+        cert.process(load_yaml(profilefile), load_yaml(enrollment), enrollment, config)
 
 
 if __name__ == "__main__":

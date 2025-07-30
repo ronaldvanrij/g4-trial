@@ -1,6 +1,7 @@
 ---
+profile: profiles/G4PKIoPrivGTLSSYS2024.yaml
 subject:
- C: NL
- O: My TSP - not for Production use
- CN: TRIAL My TSP - G4 PKIo Priv G-TLS SYS - 2025
- organizationIdentifier: NTRNL-99999990
+  C: NL
+  CN: TRIAL My TSP - G4 PKIo Priv G-TLS SYS - 2025
+  O: My TSP - not for Production use
+  organizationIdentifier: NTRNL-99999990

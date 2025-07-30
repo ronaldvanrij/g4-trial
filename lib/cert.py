@@ -58,7 +58,7 @@ def build_qc_statements_extension(qc_data):
     )
 
 
-def handle_extensions(builder, ext, subject_keys, ca_keys):
+def handle_extensions(builder, ext, enrollment, subject_keys, ca_keys):
 
     if 'basicConstraints' in ext:
         builder = builder.add_extension(
@@ -153,9 +153,9 @@ def handle_extensions(builder, ext, subject_keys, ca_keys):
             critical=ext['keyUsage'].get('critical', True)
         )
 
-    if 'subjectAltNames' in ext:
-        san_entries = ext['subjectAltNames'].get('value', [])
-        dns_names = [x509.DNSName(name) for name in san_entries]
+    if 'subjectAltNames' in enrollment:
+        # SANs are define in the enrollment data
+        dns_names = [x509.DNSName(name) for name in enrollment['subjectAltNames']]
         builder = builder.add_extension(
             x509.SubjectAlternativeName(dns_names),
             critical=ext['subjectAltNames'].get('critical', False)
@@ -187,19 +187,15 @@ def sign(profile, enrollment, subject_keys, issuer_keys):
 
     # Certificate Builder
     builder = x509.CertificateBuilder()
-    try:
-        builder = builder.subject_name(as_name(enrollment['subject']))
-    except Exception as e:
-        print(enrollment['subject'])
-        raise e
+    builder = builder.subject_name(as_name(enrollment['subject']))
     builder = builder.issuer_name(as_name(profile['issuer']))
     builder = builder.public_key(subject_keys.public_key)
     builder = builder.serial_number(serial_number)
     builder = builder.not_valid_before(not_before)
     builder = builder.not_valid_after(not_after)
 
-    # Extensions
-    builder = handle_extensions(builder, profile['extensions'], subject_keys, issuer_keys)
+    # Build Extensions
+    builder = handle_extensions(builder, profile['extensions'], enrollment, subject_keys, issuer_keys)
 
     # Sign certificate
     cert = builder.sign(
@@ -216,60 +212,53 @@ def sign(profile, enrollment, subject_keys, issuer_keys):
     return cert
 
 
-def process(profilefile, enrollmentfile, config):
-
-    # Load all YAML files
-    profile = load_yaml(profilefile)
-    enrollment = load_yaml(enrollmentfile)
+def process(profile, enrollment, enrollmentfile, config):
 
     # Validate CSR against the certificate profile
-    if 'validations' in profile:
-        catalog = create_catalog("2020-12")
-        schema = JSONSchema(profile['validations'])
-        result = schema.evaluate(JSON(enrollment))
-        if not result.valid:
-            print(f"Enrollment {enrollmentfile} is invalid for profile {profilefile} ❌")
-            output_errors(result.output("detailed")["errors"])
-            exit(1)
-    else:
-        print(f'WARN: no validation for CSR {enrollmentfile}')
+    create_catalog("2020-12")
+    schema = JSONSchema(profile['validations'])
+    result = schema.evaluate(JSON(enrollment))
+    if not result.valid:
+        print(f"Enrollment {enrollmentfile} is invalid for specified certificate profile ❌")
+        output_errors(result.output("detailed")["errors"])
+        exit(1)
 
     selfsigned = profile['issuer'] == enrollment['subject']
 
     # Find issuer keypair by name
-    issuername = generate_basename(profile['issuer'])
-    issuerKeys = KeyPair(issuername)
+    issuer_name = generate_basename(profile['issuer'])
+    issuer_keys = KeyPair(issuer_name)
 
-    if not selfsigned and not os.path.exists(issuerKeys.certificatefile):
+    if not selfsigned and not os.path.exists(issuer_keys.certificatefile):
         # If keys for a self-signed do not exist, we'll create them later
-        print(f"Cannot find keys of {issuerKeys} for signing operation, please generate it first")
+        print(f"Cannot find keys of {issuer_keys} for signing operation, please generate it first")
         return
 
     try:
-        issuerKeys.load()
+        issuer_keys.load()
     except FileNotFoundError:
-        issuerKeys.generate_private_key(profile)
+        issuer_keys.generate_private_key(profile)
 
     if selfsigned:
-        subjectKeys = issuerKeys
+        subject_keys = issuer_keys
 
-        if os.path.exists(subjectKeys.certificatefile):
-            print(f"Certificate {subjectKeys.basename} already exists, skipping")
+        if os.path.exists(subject_keys.certificatefile):
+            print(f"Certificate {subject_keys.basename} already exists, skipping")
             return
 
     else:
         # Find cert private key - use the same name as the input YAML file
         basename = pathlib.Path(enrollmentfile).stem
-        subjectKeys = KeyPair(basename)
+        subject_keys = KeyPair(basename)
 
-        if os.path.exists(subjectKeys.certificatefile):
+        if os.path.exists(subject_keys.certificatefile):
             print(f"Certificate {basename} already exists, skipping")
             return
 
         try:
-            subjectKeys.load()
+            subject_keys.load()
         except FileNotFoundError:
-            subjectKeys.generate_private_key(profile)
+            subject_keys.generate_private_key(profile)
 
     # Some proposed certificate values contain placeholders, replace them here to keep the sign funcion clean
     if keys_exist(profile, ['extensions', 'authorityInfoAccess', 'caIssuers']):
@@ -277,10 +266,10 @@ def process(profilefile, enrollmentfile, config):
     if keys_exist(profile, ['extensions', 'cRLDistributionPoints', 'value']):
         profile['extensions']['cRLDistributionPoints']['value'] = [value % config['cRLDistributionPointsBaseUrl'] for value in profile['extensions']['cRLDistributionPoints']['value']]
 
-    cert = sign(profile, enrollment, subjectKeys, issuerKeys)
+    cert = sign(profile, enrollment, subject_keys, issuer_keys)
 
     # Write issued certificate to disk
-    filename = subjectKeys.certificatefile
+    filename = subject_keys.certificatefile
     with open(filename, "wb") as f:
         f.write(cert.public_bytes(serialization.Encoding.DER))
 

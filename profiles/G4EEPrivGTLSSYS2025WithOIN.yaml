@@ -67,6 +67,8 @@ validations:
   $schema: https://json-schema.org/draft/2020-12/schema
   additionalProperties: false
   properties:
+    profile:
+      type: string
     subject:
       additionalProperties: false
       oneOf:
@@ -84,6 +86,9 @@ validations:
         C:
           const: NL
           type: string
+        CN:
+          maxLength: 64
+          type: string
         O:
           maxLength: 64
           minLength: 2
@@ -98,9 +103,21 @@ validations:
       - C
       - O
       type: object
+    subjectAltNames:
+      items:
+        format: hostname
+        not:
+          pattern: \.onion$
+        pattern: ^(?!\*\.)[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+$
+        type: string
+      maxItems: 100
+      minItems: 1
+      type: array
   required:
+  - profile
   - subject
-  title: Organization Validation
+  - subjectAltNames
+  title: End Entity TLS certificates require SANs + Organization Validation
   type: object
 validity:
   notAfter: 365d

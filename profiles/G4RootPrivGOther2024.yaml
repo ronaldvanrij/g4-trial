@@ -36,6 +36,8 @@ validations:
   $schema: https://json-schema.org/draft/2020-12/schema
   additionalProperties: false
   properties:
+    profile:
+      type: string
     subject:
       additionalProperties: false
       properties:
@@ -55,6 +57,7 @@ validations:
       - O
       type: object
   required:
+  - profile
   - subject
   type: object
 validity:

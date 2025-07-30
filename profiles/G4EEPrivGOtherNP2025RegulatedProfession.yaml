@@ -69,6 +69,8 @@ validations:
   $schema: https://json-schema.org/draft/2020-12/schema
   additionalProperties: false
   properties:
+    profile:
+      type: string
     subject:
       additionalProperties: false
       properties:
@@ -102,6 +104,7 @@ validations:
       - title
       type: object
   required:
+  - profile
   - subject
   title: Private Other have a CN + Natural Persons + Regulated Profession validated
   type: object

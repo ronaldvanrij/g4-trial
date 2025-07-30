@@ -82,6 +82,8 @@ validations:
   $schema: https://json-schema.org/draft/2020-12/schema
   additionalProperties: false
   properties:
+    profile:
+      type: string
     subject:
       additionalProperties: false
       oneOf:
@@ -119,6 +121,7 @@ validations:
       - O
       type: object
   required:
+  - profile
   - subject
   title: Private Other have a CN + Legal Persons + Organization Validation
   type: object
