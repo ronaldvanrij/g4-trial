@@ -164,7 +164,7 @@ def handle_extensions(builder, ext, subject_keys, ca_keys):
     return builder
 
 
-def sign(profile, csr, subject_keys, issuer_keys):
+def sign(profile, enrollment, subject_keys, issuer_keys):
 
     # Validity
     if profile['validity']['notBefore'] == 'now':
@@ -188,9 +188,9 @@ def sign(profile, csr, subject_keys, issuer_keys):
     # Certificate Builder
     builder = x509.CertificateBuilder()
     try:
-        builder = builder.subject_name(as_name(csr['subject']))
+        builder = builder.subject_name(as_name(enrollment['subject']))
     except Exception as e:
-        print(csr['subject'])
+        print(enrollment['subject'])
         raise e
     builder = builder.issuer_name(as_name(profile['issuer']))
     builder = builder.public_key(subject_keys.public_key)
@@ -216,26 +216,25 @@ def sign(profile, csr, subject_keys, issuer_keys):
     return cert
 
 
-def process(profilefile, csrfile, config):
+def process(profilefile, enrollmentfile, config):
 
     # Load all YAML files
     profile = load_yaml(profilefile)
-    csr = load_yaml(csrfile)
+    enrollment = load_yaml(enrollmentfile)
 
     # Validate CSR against the certificate profile
     if 'validations' in profile:
         catalog = create_catalog("2020-12")
         schema = JSONSchema(profile['validations'])
-        instance = JSON(csr)
-        result = schema.evaluate(instance)
+        result = schema.evaluate(JSON(enrollment))
         if not result.valid:
-            print(f"CSR {csrfile} is invalid for profile {profilefile} ❌")
+            print(f"Enrollment {enrollmentfile} is invalid for profile {profilefile} ❌")
             output_errors(result.output("detailed")["errors"])
             exit(1)
     else:
-        print(f'WARN: no validation for CSR {csrfile}')
+        print(f'WARN: no validation for CSR {enrollmentfile}')
 
-    selfsigned = profile['issuer'] == csr['subject']
+    selfsigned = profile['issuer'] == enrollment['subject']
 
     # Find issuer keypair by name
     issuername = generate_basename(profile['issuer'])
@@ -260,7 +259,7 @@ def process(profilefile, csrfile, config):
 
     else:
         # Find cert private key - use the same name as the input YAML file
-        basename = pathlib.Path(csrfile).stem
+        basename = pathlib.Path(enrollmentfile).stem
         subjectKeys = KeyPair(basename)
 
         if os.path.exists(subjectKeys.certificatefile):
@@ -278,7 +277,7 @@ def process(profilefile, csrfile, config):
     if keys_exist(profile, ['extensions', 'cRLDistributionPoints', 'value']):
         profile['extensions']['cRLDistributionPoints']['value'] = [value % config['cRLDistributionPointsBaseUrl'] for value in profile['extensions']['cRLDistributionPoints']['value']]
 
-    cert = sign(profile, csr, subjectKeys, issuerKeys)
+    cert = sign(profile, enrollment, subjectKeys, issuerKeys)
 
     # Write issued certificate to disk
     filename = subjectKeys.certificatefile

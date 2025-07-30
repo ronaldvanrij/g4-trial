@@ -8,7 +8,7 @@ from lib.domains import verify
 def main():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('csrfiles', nargs='+', help="YAML Certificate Signing Requests to be signed")
+    parser.add_argument('enrollments', nargs='+', help="Enrollment files to be signed")
     args = parser.parse_args()
 
     config = load_config()
@@ -23,10 +23,10 @@ def main():
     profilefile = cert_type['profile']
 
     print(f'To automate this step, run next time:')
-    print(f'python generate-cert.py "{profilefile}" {' '.join([f'"{csrfile}"' for csrfile in args.csrfiles])}')
+    print(f'python generate-cert.py "{profilefile}" {' '.join([f'"{enrollment}"' for enrollment in args.enrollments])}')
 
-    for csrfile in args.csrfiles:
-        cert.process(profilefile, csrfile, config)
+    for enrollment in args.enrollments:
+        cert.process(profilefile, enrollment, config)
 
 
 if __name__ == "__main__":
