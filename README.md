@@ -31,6 +31,7 @@ There have been a number of changes from G3 to G4, which you need to be aware of
 - G3 certificates used a limited number of Policy OIDs, this has been expanded significantly for the G4. This allows the relying party to pinpoint exactly which type of certificate and validation was performed; 
 - G4 makes a distinction between Authenticity and Authentication certificates, while G3 only defined Authenticity for both use cases;
 - Previously G1 Private Services Server certificate (OID: 2.16.528.1.1003.1.2.8.6) could be used both for `serverAuth` and `clientAuth` (for example in mTLS usage cases). This has been changed in G4. A "G4 Private Other Generic Legal Persons Organization Validated Authentication" is used for `clientAuth` and "G4 Private TLS Generic Devices Organization Validated Server" for `serverAuth`. 
+- G3 certificates were allowed to have IP addresses as Subject Alternate Names. The G4 prohibits this.  
 - Signature algorithm `RSASSA‐PKCS1‐v1_5` has been designated as legacy by the SOG-IS Crypto Evaluation Scheme and is replaced by `RSASSA-PSS`. This algorithm is used for certificates and CRLs. 
 
 # Certificate profiles
@@ -114,7 +115,7 @@ python generate-cert.py examples/enrollment/G4-Private-G-TLS-SYS-WithOrganizatio
 
 Prior to generating the certificate, the script will validate your enrollment file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field. 
 
-The filenames of the newly generated private and public keys will match the filename of the enrollment file. They will be placed in the `ca/private` and the `ca/certs` directories. 
+The filenames of the newly generated private and public keys will match the filename of the enrollment file. They will be placed in the `ca/private` and the `ca/certs` directories. The command will not overwrite any preexisting files. 
 
 ## Revocations
 
