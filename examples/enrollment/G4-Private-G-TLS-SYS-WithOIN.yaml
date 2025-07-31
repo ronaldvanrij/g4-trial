@@ -1,0 +1,9 @@
+---
+profile: profiles/G4EEPrivGTLSSYS2025WithOIN.yaml
+subject:
+  C: NL
+  O: Bedrijfsnaam
+  serialNumber: 00000000999999910000  # This is the OIN, or a KvK registration number in an OIN format
+subjectAltNames:
+  - example-with-OIN.com
+  - www.example-with-OIN.com

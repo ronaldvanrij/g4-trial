@@ -1,0 +1,7 @@
+---
+profile: profiles/G4EEPrivGOtherLP2025WithOIN.yaml
+subject:
+  C: NL
+  O: Bedrijfsnaam
+  CN: Bedrijfsnaam - Afdeling with OIN
+  serialNumber: 00000000999999910000  # This is the OIN, or a KvK registration number in an OIN format

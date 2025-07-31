@@ -85,15 +85,36 @@ python create-ca.py
 
 ## Create end entity certificates
 
-Each end entity certificate requires subject information to be provided separately. This information is provided using a YAML file. Please see any of the files in the `examples/csr` directory.  
+Each end entity certificate requires subject information to be provided separately from the certificate profile. This information is provided using an "enrollment" YAML file. Please see any of the files in the `examples/enrollment` directory. The filename will indicate the certificate type. Please see the "G1/G3 to G4 mapping table" on the logius.nl website for information which certificate type you need for your use case. 
 
-Depending on certificate type the `subject` field must contain certain attributes, while others are prohibited. The script will validate your file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field. When run, the script will prompt for which domain the certificate will be signed for. 
+Enrollment files will need to be modified for your own use cases. An example enrollment file would be:
 
-```bash
-python create-endentity.py <one or more YAML CSR files>
+```yaml
+---
+profile: profiles/G4EEPrivGTLSSYS2025WithorganizationIdentifier.yaml
+subject:
+  C: NL
+  O: Bedrijfsnaam
+  organizationIdentifier: NTRNL-99999991
+subjectAltNames:
+  - example-with-NTRNL.com
+  - www.example-with-NTRNL.com
 ```
 
-The newly generated private keys are located in the `ca/private` directory and the certificates in the `ca/certs` directory. Use as appropriate.
+The file indicates which certificate profile is to be used, provides `subject` information and (in this case) two FQDNs to be included in the certificate. For each end entity certificate you want to create, copy the enrollment file and modify it according to your needs. Then run:
+
+```bash
+python generate-cert.py <one or more enrollment files>
+```
+
+Example enrollment files can be used directly, e.g. the following command will create an end entity certificate to secure a TLS endpoint.
+```bash
+python generate-cert.py examples/enrollment/G4-Private-G-TLS-SYS-WithOrganizationIdentifier.yaml
+```
+
+Prior to generating the certificate, the script will validate your enrollment file against the requirements for the selected hierarchy and output any discrepancies. Please note that no validations are performed on the actual contents of each attribute, please refer to the [Programme of Requirements section 7.1.4.2.2](https://cp.pkioverheid.nl/pkioverheid-por-v5.1.html#id__71422-subject-distinguished-name-fields) to determine what information should be included in each field. 
+
+The filenames of the newly generated private and public keys will match the filename of the enrollment file. They will be placed in the `ca/private` and the `ca/certs` directories. 
 
 ## Revocations
 
@@ -104,6 +125,10 @@ If you'd like to host the CA certificates (as specified in the certificate's `au
 ```bash
 bash start-server.sh
 ```
+
+# Customizing
+
+## Issuing certificates and CRL locations
 
 If you intend to host the certificates and CRLs on another domain modify the `config.yaml` file accordingly. You must recreate all certificates for these values to be used. An example configuration could be: 
 
@@ -123,15 +148,16 @@ The Programme of Requirements dictates that CRLs must be renewed (regenerated) a
 
 # File list
 
-| Filename              | Description                                                             |
-|-----------------------|-------------------------------------------------------------------------|
-| `create_ca.py`        | Script to create the top level CA private keys and certificates         |
-| `create_endentity.py` | Script to create any number of end entity private keys and certificates |
-| `start_server.sh`     | A minimal webserver to host generated certificates and CRLs             |
-| `ca/private/*.key`    | Generated private keys                                                  |
-| `ca/certs/*.pem`      | Issued certificates                                                     |
-| `ca/crl/*.crl`        | CRLs for the generated CA certificates                                  |
-| `examples`            | Example files to create end entity certificates and revocation lists    |
+| Filename           | Description                                                             |
+|--------------------|-------------------------------------------------------------------------|
+| `create_ca.py`     | Script to create the top level CA private keys and certificates         |
+| `generate-cert.py` | Script to create any number of end entity private keys and certificates |
+| `generate-crl.py`  | Script to create CRLs for a CA                                          |
+| `start_server.sh`  | A minimal webserver to host generated certificates and CRLs             |
+| `ca/private/*.key` | Generated private keys                                                  |
+| `ca/certs/*.pem`   | Issued certificates                                                     |
+| `ca/crl/*.crl`     | CRLs for the generated CA certificates                                  |
+| `examples`         | Example files to create end entity certificates and revocation lists    |
 
 # Requirements
 
