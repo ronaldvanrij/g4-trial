@@ -92,14 +92,14 @@ Enrollment files will need to be modified for your own use cases. An example enr
 
 ```yaml
 ---
-profile: profiles/G4EEPrivGTLSSYS2025WithorganizationIdentifier.yaml
+profile: profiles/G4EEPrivGTLSSYS2025.yaml
 subject:
   C: NL
   O: Bedrijfsnaam
   organizationIdentifier: NTRNL-99999991
 subjectAltNames:
-  - example-with-NTRNL.com
-  - www.example-with-NTRNL.com
+  - example.com
+  - www.example.com
 ```
 
 The file indicates which certificate profile is to be used, provides `subject` information and (in this case) two FQDNs to be included in the certificate. For each end entity certificate you want to create, copy the enrollment file and modify it according to your needs. Then run:

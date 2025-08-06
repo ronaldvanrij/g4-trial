@@ -17,11 +17,11 @@ domains:
         revocations: revocations/TRIALMyTSPG4PKIoPrivGTLSSYS2025.yaml
 
     endentity:
-      - label: Organization Validated using an OIN
-        profile: profiles/G4EEPrivGTLSSYS2025WithOIN.yaml
+      - label: Organization Validated
+        profile: profiles/G4EEPrivGTLSSYS2025.yaml
 
-      - label: Organization Validated using an organizationIdentifier
-        profile: profiles/G4EEPrivGTLSSYS2025WithorganizationIdentifier.yaml
+      - label: Organization Validated including an OIN
+        profile: profiles/G4EEPrivGTLSSYS2025.yaml
 
   G4 Private Other Generic NP:
     hierarchy:
@@ -65,8 +65,8 @@ domains:
         revocations: revocations/TRIALMyTSPG4PKIoPrivGOtherLP2025.yaml
 
     endentity:
-      - label: Organization identified with an OIN
-        profile: profiles/G4EEPrivGOtherLP2025WithOIN.yaml
+      - label: Organization identified
+        profile: profiles/G4EEPrivGOtherLP2025.yaml
 
-      - label: Organization identified with an organizationIdentifier
-        profile: profiles/G4EEPrivGOtherLP2025WithorganizationIdentifier.yaml
+      - label: Organization identified including an OIN
+        profile: profiles/G4EEPrivGOtherLP2025.yaml

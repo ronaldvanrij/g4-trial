@@ -1,9 +1,11 @@
 ---
-profile: profiles/G4EEPrivGTLSSYS2025WithOIN.yaml
+profile: profiles/G4EEPrivGTLSSYS2025.yaml
 subject:
   C: NL
   O: Bedrijfsnaam
-  serialNumber: 00000000999999910000  # This is the OIN, or a KvK registration number in an OIN format
+  CN: Bedrijfsnaam
+  organizationIdentifier: NTRNL-99999991  # This is the KvK Registration number in an ETSI format
+  serialNumber: 00000000999999910000      # This is the OIN, or a KvK registration number in an OIN format
 subjectAltNames:
-  - example-with-OIN.com
-  - www.example-with-OIN.com
+  - example.com
+  - www.example.com

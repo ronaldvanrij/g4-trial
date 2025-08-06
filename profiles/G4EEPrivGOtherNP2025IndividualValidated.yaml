@@ -47,7 +47,6 @@ extensions:
     oid: 2.5.29.15
     value:
     - digitalSignature
-    - digitalSignature
   subjectKeyIdentifier:
     critical: false
     oid: 2.5.29.14

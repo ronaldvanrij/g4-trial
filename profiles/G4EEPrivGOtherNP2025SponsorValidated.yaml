@@ -47,7 +47,6 @@ extensions:
     oid: 2.5.29.15
     value:
     - digitalSignature
-    - digitalSignature
   qcStatements:
     critical: false
     oid: 1.3.6.1.5.5.7.1.3
@@ -111,7 +110,6 @@ validations:
       - GN
       - O
       - SN
-      - organizationIdentifier
       - serialNumber
       type: object
   required:

@@ -1,9 +1,10 @@
 ---
-profile: profiles/G4EEPrivGTLSSYS2025WithorganizationIdentifier.yaml
+profile: profiles/G4EEPrivGTLSSYS2025.yaml
 subject:
   C: NL
   O: Bedrijfsnaam
+  CN: Bedrijfsnaam
   organizationIdentifier: NTRNL-99999991  # This is the KvK Registration number in an ETSI format
 subjectAltNames:
-  - example-with-NTRNL.com
-  - www.example-with-NTRNL.com
+  - example.com
+  - www.example.com
