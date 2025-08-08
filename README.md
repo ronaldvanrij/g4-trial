@@ -30,7 +30,7 @@ There have been a number of changes from G3 to G4, which you need to be aware of
 - Intermediate CAs are based upon Subject Type (Natural Persons, Legal Entities or Devices), rather than a validation type, for example the G3's "Organisatie Persoon";
 - G3 certificates used a limited number of Policy OIDs, this has been expanded significantly for the G4. This allows the relying party to pinpoint exactly which type of certificate and validation was performed; 
 - G4 makes a distinction between Authenticity and Authentication certificates, while G3 only defined Authenticity for both use cases;
-- Previously G1 Private Services Server certificate (OID: 2.16.528.1.1003.1.2.8.6) could be used both for `serverAuth` and `clientAuth` (for example in mTLS usage cases). This has been changed in G4. A "G4 Private Other Generic Legal Persons Organization Validated Authentication" is used for `clientAuth` and "G4 Private TLS Generic Devices Organization Validated Server" for `serverAuth`. 
+- Previously two variants existed of G1 Private Services Server certificate (OID: 2.16.528.1.1003.1.2.8.6). One containing SubjectAlternateNames and one without. This has been changed in G4. A "G4 Private Other Generic Legal Persons Organization Validated Authentication" does not contain SubjectAlterNames and is used only for `clientAuth`. A "G4 Private TLS Generic Devices Organization Validated Server" contains one or more SubjectAlternateNames and can be used for both `clientAuth` and `serverAuth`. 
 - G3 certificates were allowed to have IP addresses as Subject Alternate Names. The G4 prohibits this.  
 - Signature algorithm `RSASSA‐PKCS1‐v1_5` has been designated as legacy by the SOG-IS Crypto Evaluation Scheme and is replaced by `RSASSA-PSS`. This algorithm is used for certificates and CRLs. 
 
@@ -102,7 +102,7 @@ Enrollment files will need to be modified for your own use cases. An example enr
 
 ```yaml
 ---
-profile: profiles/G4EEPrivGTLSSYS2025.yaml
+profile: profiles/G4TRIALEEPrivGTLSSYS2025.yaml
 subject:
   C: NL
   O: Bedrijfsnaam

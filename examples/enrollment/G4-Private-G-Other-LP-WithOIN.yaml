@@ -1,8 +1,8 @@
 ---
-profile: profiles/G4EEPrivGOtherLP2025WithOIN.yaml
+profile: profiles/G4TRIALEEPrivGOtherLP2025.yaml
 subject:
   C: NL
   O: Bedrijfsnaam
   CN: Bedrijfsnaam - Afdeling with OIN
   organizationIdentifier: NTRNL-99999991
-  serialNumber: 00000000999999910000  # This is the OIN, or a KvK registration number in an OIN format
+  serialNumber: 00000003999999910000  # OIN, please see https://logius-standaarden.github.io/OIN-Stelsel/#prefix-tabel

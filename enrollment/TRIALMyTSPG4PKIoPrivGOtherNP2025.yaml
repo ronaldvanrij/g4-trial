@@ -1,5 +1,5 @@
 ---
-profile: profiles/G4PKIoPrivGOtherNP2025.yaml
+profile: profiles/G4TRIALPKIoPrivGOtherNP2025.yaml
 subject:
   C: NL
   CN: TRIAL My TSP - G4 PKIo Priv G-Other NP - 2025
